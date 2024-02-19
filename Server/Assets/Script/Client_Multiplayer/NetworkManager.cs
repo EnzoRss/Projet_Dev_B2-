@@ -2,10 +2,15 @@ using Riptide;
 using Riptide.Utils;
 using UnityEngine;
 
+
+public enum ClientToServerID : ushort
+{
+    name = 1,
+}
 public class NetworkManager : MonoBehaviour
 {
 
-  /*  private static NetworkManager _singleton;
+    private static NetworkManager _singleton;
 
     public static NetworkManager Singleton
     {
@@ -20,7 +25,7 @@ public class NetworkManager : MonoBehaviour
             }
         }
     }
-*/
+
     [SerializeField] private ushort maxClient;
     [SerializeField] private ushort port;
     public Server server { get; private set; }
