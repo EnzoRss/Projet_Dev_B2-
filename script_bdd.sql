@@ -2,14 +2,8 @@
 users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_type_id INT > user_types.id,
-    parse_id VARCHAR(255),
     email VARCHAR(255),
-    password VARCHAR(255),
-    logged_in BOOLEAN,
-    token_facebook VARCHAR(255),
-    token_twitter VARCHAR(255),
-    user_token VARCHAR(255),
-    token_expiration DATETIME
+    password VARCHAR(255)
 );
 
 -- Table des parties
@@ -55,7 +49,6 @@ game_history (
     match_id INT > matches.id,
     event_description VARCHAR(255)
 );
-
 
 -- Table des cartes
 cards (
