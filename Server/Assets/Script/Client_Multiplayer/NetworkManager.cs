@@ -6,6 +6,7 @@ using UnityEngine;
 public enum ClientToServerID : ushort
 {
     name = 1,
+    JoinQueue = 2,
 }
 public class NetworkManager : MonoBehaviour
 {
