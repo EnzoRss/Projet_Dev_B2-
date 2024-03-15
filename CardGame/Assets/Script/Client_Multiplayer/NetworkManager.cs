@@ -6,6 +6,9 @@ public enum ClientToServerID : ushort
 {
     name = 1,
     JoinQueue = 2,
+    GameStart = 3,
+    InGame =4,
+
 }
 public class NetworkManager : MonoBehaviour
 {
@@ -52,9 +55,7 @@ public class NetworkManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-
-        Client.Update();
-        
+        Client.Update();   
     }
 
     private void OnApplicationQuit()
@@ -66,7 +67,7 @@ public class NetworkManager : MonoBehaviour
     {
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.name);
         messsage.AddString("test");
-        messsage.AddUShort(1);
+        messsage.AddUShort(2);
         NetworkManager.Singleton.Client.Send(messsage);
         Debug.Log("message envoyer");
     }
@@ -74,8 +75,9 @@ public class NetworkManager : MonoBehaviour
     public void JoinQueue()
     {
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.JoinQueue);
-        messsage.AddUShort(1);//change to id later
+        messsage.AddUShort(2);//change to id later
         Client.Send(messsage);
         Debug.Log("message to join the queue send");
     }
+
 }

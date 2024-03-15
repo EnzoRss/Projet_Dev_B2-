@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Riptide;
 using Riptide.Utils;
 using UnityEngine;
@@ -7,12 +8,13 @@ public enum ClientToServerID : ushort
 {
     name = 1,
     JoinQueue = 2,
+    StartGame= 3,
+    InGame= 4,
 }
 public class NetworkManager : MonoBehaviour
 {
 
     private static NetworkManager _singleton;
-
     public static NetworkManager Singleton
     {
         get => _singleton;
@@ -30,13 +32,13 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private ushort maxClient;
     [SerializeField] private ushort port;
     public Server server { get; private set; }
-
+  
     private void Start()
     {
         RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError,false);
-
         server = new Server();
         server.Start(port,maxClient);
+        
     }
 
     private void FixedUpdate()
@@ -48,4 +50,6 @@ public class NetworkManager : MonoBehaviour
     {
         server.Stop();
     }
+
+  
 }
