@@ -26,6 +26,8 @@ CREATE TABLE cards(
    Id_cards INT AUTO_INCREMENT,
    card_name VARCHAR(50),
    description VARCHAR(255),
+   pv INT,
+   damages INT,
    PRIMARY KEY(Id_cards)
 );
 
@@ -35,13 +37,6 @@ CREATE TABLE decks(
    PRIMARY KEY(Id_decks)
 );
 
-CREATE TABLE stats_card(
-   Id_stats_card INT AUTO_INCREMENT,
-   pv INT,
-   damages INT,
-   others VARCHAR(50),
-   PRIMARY KEY(Id_stats_card)
-);
 
 CREATE TABLE matches(
    Id_matches INT AUTO_INCREMENT,

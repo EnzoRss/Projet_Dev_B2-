@@ -1,6 +1,8 @@
 using Riptide;
 using Riptide.Utils;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ClientToServerID : ushort
 {
@@ -31,7 +33,7 @@ public class NetworkManager : MonoBehaviour
 
     [SerializeField] private string ip;
     [SerializeField] private string port;
-    bool IsConnected;
+    public bool IsConnected;
     public Client Client { get; private set; }
 
     private void Awake()
@@ -45,16 +47,13 @@ public class NetworkManager : MonoBehaviour
         RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
         Client = new Client();
-        if ( IsConnected )
-        {
-            SendName();
-
-        } 
     }
+    
 
     private void FixedUpdate()
     {
-        Client.Update();   
+        Client.Update();
+        
     }
 
     private void OnApplicationQuit()
@@ -65,6 +64,7 @@ public class NetworkManager : MonoBehaviour
     public void ConnectClicked()
     {
         IsConnected = Singleton.Connection();
+        
     }
 
     private bool Connection()
@@ -84,12 +84,12 @@ public class NetworkManager : MonoBehaviour
         Debug.Log("message envoyer");
     }
 
-    public void JoinQueue()
+   /* public void JoinQueue()
     {
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.JoinQueue);
-        messsage.AddUShort(2);//change to id later
-        Client.Send(messsage);
+        messsage.AddUShort(2);
+        NetworkManager.Singleton.Client.Send(messsage);
         Debug.Log("message to join the queue send");
-    }
+    }*/
 
 }
