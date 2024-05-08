@@ -45,7 +45,6 @@ public class NetworkManager : MonoBehaviour
         RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 
         Client = new Client();
-        IsConnected  = Client.Connect($"{ip}:{port}");
         if ( IsConnected )
         {
             SendName();
@@ -62,6 +61,19 @@ public class NetworkManager : MonoBehaviour
     {
         Client.Disconnect();
     }
+
+    public void ConnectClicked()
+    {
+        IsConnected = Singleton.Connection();
+    }
+
+    private bool Connection()
+    {
+        bool connected = false;
+        connected = Client.Connect($"{ip}:{port}");
+        return connected;
+    }
+
 
     public void SendName() 
     {
