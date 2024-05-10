@@ -1,9 +1,16 @@
+CREATE TABLE decks(
+   Id_decks INT AUTO_INCREMENT,
+   name VARCHAR(50),
+   PRIMARY KEY(Id_decks)
+);
+
 CREATE TABLE users(
    Id_users INT AUTO_INCREMENT,
    username VARCHAR(255) NOT NULL,
    password VARCHAR(255) NOT NULL,
    PRIMARY KEY(Id_users),
    UNIQUE(username),
+   Id_decks INT,
    FOREIGN KEY(Id_decks) REFERENCES decks(Id_decks)
 );
 
@@ -31,13 +38,6 @@ CREATE TABLE cards(
    atk INT,
    PRIMARY KEY(Id_cards)
 );
-
-CREATE TABLE decks(
-   Id_decks INT AUTO_INCREMENT,
-   name VARCHAR(50),
-   PRIMARY KEY(Id_decks)
-);
-
 
 CREATE TABLE matches(
    Id_matches INT AUTO_INCREMENT,
