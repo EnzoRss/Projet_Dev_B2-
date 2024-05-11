@@ -7,7 +7,7 @@ SET @deckDefenseId = LAST_INSERT_ID() + 1;
 SET @deckEquilibreId = LAST_INSERT_ID() + 2;
 
 -- Creation des cartes pour le Deck Attaque
-INSERT INTO cards (card_name, description, pv, damages) VALUES 
+INSERT INTO cards (card_name, description, pv, atk) VALUES 
     ('Chevalier Vaillant', 'Un chevalier intrepide en quete de victoire', 10, 12),
     ('Archer Aguerri', 'Un archer adroit et rapide avec son arc', 8, 10),
     ('Lancier Courageux', 'Un lancier resolu et determine sur le champ de bataille', 12, 10),
@@ -20,7 +20,7 @@ INSERT INTO cards (card_name, description, pv, damages) VALUES
     ('Arbaletrier emerite', 'Un arbaletrier adroit et precis dans ses tirs', 14, 8);
 
 -- Creation des cartes pour le Deck Defense
-INSERT INTO cards (card_name, description, pv, damages) VALUES 
+INSERT INTO cards (card_name, description, pv, atk) VALUES 
     ('Sentinelle Vigilante', 'Une sentinelle vigilante gardant les remparts', 12, 7),
     ('ecuyer Devoue', 'Un ecuyer fidele et devoue a son seigneur', 14, 5),
     ('Archer de Reserve', 'Un archer de reserve protegeant les frontieres', 15, 4),
@@ -33,7 +33,7 @@ INSERT INTO cards (card_name, description, pv, damages) VALUES
     ('Defenseur Valeureux', 'Un defenseur valeureux defendant sa patrie', 11, 7);
 
 -- Creation des cartes pour le Deck equilibre
-INSERT INTO cards (card_name, description, pv,damages) VALUES 
+INSERT INTO cards (card_name, description, pv,atk) VALUES 
     ('Guerrier Polyvalent', 'Un guerrier polyvalent avec une formation equilibree', 9, 9),
     ('Combattant Versatile', 'Un combattant polyvalent capable de sadapter a toutes les situations', 10, 10),
     ('Brave Combattant', 'Un brave combattant avec des competences equilibrees', 11, 8),
