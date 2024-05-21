@@ -34,6 +34,9 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private string ip;
     [SerializeField] private string port;
     public bool IsConnected;
+    public GameObject ConnectButton;
+    public GameObject StartMatchMaking;
+    public Player Player;
     public Client Client { get; private set; }
 
     private void Awake()
@@ -64,7 +67,11 @@ public class NetworkManager : MonoBehaviour
     public void ConnectClicked()
     {
         IsConnected = Singleton.Connection();
-        
+        if (IsConnected )
+        {
+            ConnectButton.SetActive(false);
+            StartMatchMaking.SetActive(true);
+        }
     }
 
     private bool Connection()
@@ -78,18 +85,18 @@ public class NetworkManager : MonoBehaviour
     public void SendName() 
     {
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.name);
-        messsage.AddString("test");
-        messsage.AddUShort(2);
+        messsage.AddString(Player.username);
+        messsage.AddUShort(Player.id);
         NetworkManager.Singleton.Client.Send(messsage);
         Debug.Log("message envoyer");
     }
 
-   /* public void JoinQueue()
+   public void JoinQueue()
     {
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.JoinQueue);
-        messsage.AddUShort(2);
+        messsage.AddUShort(Player.id);
         NetworkManager.Singleton.Client.Send(messsage);
         Debug.Log("message to join the queue send");
-    }*/
+    }
 
 }

@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,9 @@ public class Deck
 {
     int id;
     public string name;
-    List<Card> deck; 
-    List<Card> cardOnBoard;
-    List<Card> cardInHand;
+    public List<Card> deck; 
+    public List<Card> cardOnBoard;
+    public List<Card> cardInHand;
 
     public void DrawCard()
     {
@@ -17,15 +18,23 @@ public class Deck
         cardInHand.Add(deck.ElementAt(randomNumber));
         deck.RemoveAt(randomNumber);
     }
+    public Deck(int id) 
+    {
+        this.id = id;
+        deck = new List<Card>();
+        cardOnBoard = new List<Card>();
+        cardInHand = new List<Card>();
+    }
 }
 
 public class Card
 {
-    int id;
-    public string name;
+    public string Id_cards;
+    public string card_name;
     public string description;
-    public int pv;
-    public int atk;
+    public string pv;
+    public string atk;
+    public string Id_decks;
 }
 
 

@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 
 
@@ -16,32 +17,63 @@ public  class ButtonManager : MonoBehaviour
 
     public GameObject connect;
     public GameObject nameInput;
+    public GameObject PassInput;
     public GameObject nameSelect;
+    public GameObject ConnectSelect;
     public GameObject toggleDeck1;
     public GameObject toggleDeck2;
     public GameObject toggleDeck3;
     public GameObject confirmDeck;
+    public GameObject ButtonConnect;
+    public GameObject ButtonCreate;
 
-    public void NameSelection()
+    public HttpManagement httpHandler;
+
+    public void ConnectButton()
     {
-        if (NetworkManager.IsConnected)
-        {
-            connect.SetActive(false);
-            nameInput.SetActive(true);
-            nameSelect.SetActive(true);   
-        }
+        ButtonConnect.SetActive(false);
+        ButtonCreate.SetActive(false); 
+        nameInput.SetActive(true);
+        PassInput.SetActive(true);
+        ConnectSelect.SetActive(true);   
     }
 
+    public void ConnectTry()
+    {
+        string username = nameInput.GetComponent<TMP_InputField>().text;
+        string password = PassInput.GetComponent<TMP_InputField>().text;
+        httpHandler.StartGetPlayer("/SelectData?table=users&filter={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
+        Connect();
+    }
+
+    public void Connect()
+    {
+        nameInput.SetActive(false);
+        PassInput.SetActive(false);
+        ConnectSelect.SetActive(false);
+        connect.SetActive(true);
+    }
+
+    public void CreateButton()
+    {
+        ButtonConnect.SetActive(false);
+        ButtonCreate.SetActive(false);
+        nameInput.SetActive(true);
+        PassInput.SetActive(true);
+        nameSelect.SetActive(true);
+    }
 
     public  void CreatePlayer()
     {
         
         if (nameInput.GetComponent<TMP_InputField>() != null )
         {
-            string surname = nameInput.GetComponent<TMP_InputField>().text;
-            player = new Player(surname);
+            string username = nameInput.GetComponent<TMP_InputField>().text;
+            string password = PassInput.GetComponent<TMP_InputField>().text;
+            player = new Player(username,password);
             nameSelect.SetActive(false);
             nameInput.SetActive(false);
+            PassInput.SetActive(false);
             toggleDeck1.SetActive(true);
             toggleDeck2.SetActive(true);
             toggleDeck3.SetActive(true);
@@ -55,13 +87,14 @@ public  class ButtonManager : MonoBehaviour
 
     public void SelectDeck()
     {
-        Deck deck = new Deck();
         Debug.Log(activeToggle.name);
         toggleDeck1.SetActive(false);
         toggleDeck2.SetActive(false);
         toggleDeck3.SetActive(false);
         confirmDeck.SetActive(false);
-        player.deck = deck;
+        httpHandler.StartGetCard("/SelectDataJoin?table={\"table1\":\"cards\",\"table2\":\"decks_cards\"}&key={\"key1\":\"cards.Id_cards\",\"key2\":\"decks_cards.Id_Cards\"}&filter={\"decks_cards.Id_decks\":"+ activeToggle.name +"}");
+        httpHandler.StartGetRequest("/CreateData?table=users&data={\"username\":\"" + player.username + "\",\"password\":\"" + player.password + "\",\"Id_decks\":" + activeToggle.name + "}");
+
     }
 
     void Start()
