@@ -7,13 +7,14 @@ class SelectDataJoin extends Service {
 
     function Trig() {
         $args = $this->GetArgs();
-        $table = $args["table"];
+        $table = json_decode($args["table"],true);
         $col = $args["col"] ?? "*";
-        $key = $args["key"];
+        $key = json_decode($args["key"],true);
         $filter = isset($args["filter"]) ?json_decode($args["filter"],true) : "";
         $dbh = new DataBaseHandler();
         $ans = $dbh->SelectDataJoin($table, $col,$key,$filter);
-        print_r($ans);
+        echo json_encode($ans,JSON_PRETTY_PRINT);
+
     }
 
     static function EndPoint() {

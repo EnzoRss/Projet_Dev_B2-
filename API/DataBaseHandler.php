@@ -1,14 +1,16 @@
 <?php
 
 require_once($_SERVER["DOCUMENT_ROOT"] . "/API/Connexion.php");
-
+require_once($_SERVER["DOCUMENT_ROOT"] . "/API/Service/Utils.php");
 class DataBaseHandler
 {
     public $Connexion;
+    public $Utils ;
 
     function __construct()
     {
         $this->Connexion = new  Connexion("CardGame");
+        $this->Utils = new Utils();
     }
 
     function SelectData($table, $filter, $col)
@@ -20,7 +22,7 @@ class DataBaseHandler
         } elseif (count($filter) > 1) {
             $queryString = '';
             foreach ($filter as $key => $value) {
-                $queryString .= "$key=$value AND ";
+                $queryString .= "$key= \"$value\" AND ";
             }
             // Supprimer le " AND " final
             $queryString = rtrim($queryString, ' AND ');
@@ -32,31 +34,54 @@ class DataBaseHandler
             }
             $sql = $acces->prepare("select $col from $table WHERE $queryString");
         }
-        var_dump($sql);
         $ans = $sql->execute();
-        $personne = $sql->fetchAll();
-        print_r($personne);
-        $personne = json_decode($personne);
-        return $personne;
+        if (!$ans){
+            return  false;
+        }
+        $data = $sql->fetch();
+        $res = $this->Utils->ArrayKeyOnly($data);
+        return $res;
     }
 
     Function SelectDataJoin($table,$col,$key,$filter) {
         $acces = $this->Connexion->dbh;
-        $table1  = $table[0];
-        $table2 = $table[1];
-        $key1 = $key[0];
-        $key2 = $key[1];
+        $table1  = $table["table1"];
+        $table2 = $table["table2"];
+        $key1 = $key["key1"];
+        $key2 = $key["key2"];
         $queryString = '';
         foreach ($filter as $key => $value) {
             $queryString .= "$key=$value";
         }
         $sql = $acces->prepare("select $col from $table1 join $table2 on $key1 = $key2 WHERE $queryString");
-        print_r($sql);
         $sql->execute();
-        $personne = $sql->fetchAll();
-        print_r($personne);
-        $personne = json_decode($personne);
-        return $personne;
+
+        $data = $sql->fetchAll();
+       //s var_dump($data);
+        // Tableau pour stocker les nouvelles données
+        $realdata = [];
+
+// Parcours de chaque array dans le tableau
+        foreach ($data as $array) {
+            // Initialiser un nouveau tableau pour chaque array
+            $newArray = [];
+
+            // Filtrer uniquement les clés associatives pour cet array
+            foreach ($array as $cle => $valeur) {
+                if (is_string($cle)) {
+                    $newArray[$cle] = $valeur;
+                }
+            }
+
+            // Ajouter le nouvel array au tableau de résultats
+            $realdata[] = $newArray;
+        }
+        $realdata = $this->Utils->ArrayKeyOnly($data);
+        // Afficher le nouveau tableau
+        //var_dump($realdata);
+        //$finaldata = array("Items"=>$realdata);
+        //var_dump($finaldata);
+        return $realdata;
     }
 
 
@@ -66,13 +91,13 @@ class DataBaseHandler
         $values = "'" . implode("','", array_values($data)) . "'";
         $acces = $this->Connexion->dbh;
         $sql = "INSERT into $table ($col) values ($values);";
-        print($sql);
         try {
             $req = $acces->prepare($sql);
-            return $req->execute();
+            $res = $req->execute();
         } catch (PDOException $e) {
             var_dump($e);
         }
+        return $res;
     }
 
 

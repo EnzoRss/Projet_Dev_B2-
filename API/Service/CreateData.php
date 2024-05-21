@@ -8,11 +8,9 @@ class CreateData extends Service {
         $args = $this->GetArgs();
         $table = $args["table"];
         $data = json_decode($args["data"],true);
-        var_dump($data);
         $dbh = new DataBaseHandler();
         $res = $dbh->CreateData($table,$data);
-        var_dump($res);
-
+        echo $res;
     }
 
     static function EndPoint() {
