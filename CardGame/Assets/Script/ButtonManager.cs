@@ -4,13 +4,14 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 
 
 public  class ButtonManager : MonoBehaviour
 {
-    public Player player ;
+    public PlayerManager PlayerManager;
     public ToggleGroup toggleGroup;
     private Toggle activeToggle;
     public NetworkManager NetworkManager;
@@ -26,11 +27,12 @@ public  class ButtonManager : MonoBehaviour
     public GameObject confirmDeck;
     public GameObject ButtonConnect;
     public GameObject ButtonCreate;
-
+    public GameObject InputIP;
     public HttpManagement httpHandler;
 
     public void ConnectButton()
     {
+       
         ButtonConnect.SetActive(false);
         ButtonCreate.SetActive(false); 
         nameInput.SetActive(true);
@@ -42,7 +44,7 @@ public  class ButtonManager : MonoBehaviour
     {
         string username = nameInput.GetComponent<TMP_InputField>().text;
         string password = PassInput.GetComponent<TMP_InputField>().text;
-        httpHandler.StartGetPlayer("/SelectData?table=users&filter={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
+        httpHandler.StartGetPlayer("/SelectData?table=users&filter={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"); ;
         Connect();
     }
 
@@ -51,7 +53,9 @@ public  class ButtonManager : MonoBehaviour
         nameInput.SetActive(false);
         PassInput.SetActive(false);
         ConnectSelect.SetActive(false);
+        InputIP.SetActive(false);
         connect.SetActive(true);
+        
     }
 
     public void CreateButton()
@@ -65,15 +69,16 @@ public  class ButtonManager : MonoBehaviour
 
     public  void CreatePlayer()
     {
-        
         if (nameInput.GetComponent<TMP_InputField>() != null )
         {
             string username = nameInput.GetComponent<TMP_InputField>().text;
             string password = PassInput.GetComponent<TMP_InputField>().text;
-            player = new Player(username,password);
+            PlayerManager.player.username = username;
+            PlayerManager.player.password = password;
             nameSelect.SetActive(false);
             nameInput.SetActive(false);
             PassInput.SetActive(false);
+            InputIP.SetActive(false);
             toggleDeck1.SetActive(true);
             toggleDeck2.SetActive(true);
             toggleDeck3.SetActive(true);
@@ -92,9 +97,9 @@ public  class ButtonManager : MonoBehaviour
         toggleDeck2.SetActive(false);
         toggleDeck3.SetActive(false);
         confirmDeck.SetActive(false);
-        httpHandler.StartGetCard("/SelectDataJoin?table={\"table1\":\"cards\",\"table2\":\"decks_cards\"}&key={\"key1\":\"cards.Id_cards\",\"key2\":\"decks_cards.Id_Cards\"}&filter={\"decks_cards.Id_decks\":"+ activeToggle.name +"}");
-        httpHandler.StartGetRequest("/CreateData?table=users&data={\"username\":\"" + player.username + "\",\"password\":\"" + player.password + "\",\"Id_decks\":" + activeToggle.name + "}");
-
+        httpHandler.StartGetCards("/SelectDataJoin?table={\"table1\":\"cards\",\"table2\":\"decks_cards\"}&key={\"key1\":\"cards.Id_cards\",\"key2\":\"decks_cards.Id_Cards\"}&filter={\"decks_cards.Id_decks\":"+ activeToggle.name +"}");
+        httpHandler.StartGetRequest("/CreateData?table=users&data={\"username\":\"" + PlayerManager.player.username + "\",\"password\":\"" + PlayerManager.player.password + "\",\"Id_decks\":" + activeToggle.name + "}");
+        Connect();
     }
 
     void Start()

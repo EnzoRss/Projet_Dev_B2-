@@ -8,8 +8,9 @@ public enum ClientToServerID : ushort
 {
     name = 1,
     JoinQueue = 2,
-    StartGame= 3,
-    InGame= 4,
+    StartGame = 3,
+    FirstPlay= 4,
+    InGame = 5,
 }
 public class NetworkManager : MonoBehaviour
 {
@@ -32,13 +33,24 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private ushort maxClient;
     [SerializeField] private ushort port;
     public Server server { get; private set; }
-  
+
+    private void Awake()
+    {
+        Singleton = this;
+    }
+
     private void Start()
     {
         RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError,false);
         server = new Server();
-        server.Start(port,maxClient);
+        StartServ();
         
+    }
+
+
+    void StartServ()
+    {
+        Singleton.server.Start(port, maxClient);
     }
 
     private void FixedUpdate()

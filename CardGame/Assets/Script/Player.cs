@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public ushort id;
+    public  ushort id;
     public string username;
     public string password;
     public Deck deck;
@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
         this.username = name;
         this.password = password;
     }
-    public Player( Deck deck)
+    public Player(Deck deck)
     {
         this.deck = deck;
     }
@@ -25,6 +25,6 @@ public class Player : MonoBehaviour
         Debug.Log(this.id);
         Debug.Log(this.username);
         Debug.Log(this.password);
-        Debug.Log(this.deck);
+        Debug.Log("Deck : "+this.deck);
     }
 }

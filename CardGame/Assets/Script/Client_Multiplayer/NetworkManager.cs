@@ -1,15 +1,18 @@
 using Riptide;
 using Riptide.Utils;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public enum ClientToServerID : ushort
 {
     name = 1,
     JoinQueue = 2,
     GameStart = 3,
-    InGame =4,
+    FirstPlay = 4,
+    InGame = 5,
 
 }
 public class NetworkManager : MonoBehaviour
@@ -31,12 +34,13 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    [SerializeField] private string ip;
+    private string ip;
     [SerializeField] private string port;
     public bool IsConnected;
     public GameObject ConnectButton;
-    public GameObject StartMatchMaking;
-    public Player Player;
+    public GameObject MenuCanva;
+    public GameObject InputIP;
+    public  PlayerManager PlayerManager;
     public Client Client { get; private set; }
 
     private void Awake()
@@ -70,14 +74,21 @@ public class NetworkManager : MonoBehaviour
         if (IsConnected )
         {
             ConnectButton.SetActive(false);
-            StartMatchMaking.SetActive(true);
+            MenuCanva.SetActive(true);
         }
+    }
+
+    public void GetIp()
+    {
+        ip = InputIP.GetComponent<TMP_InputField>().text;
+        InputIP.SetActive(false);
     }
 
     private bool Connection()
     {
         bool connected = false;
-        connected = Client.Connect($"{ip}:{port}");
+        
+        connected = Client.Connect($"{ip}:{port}", useMessageHandlers: false);
         return connected;
     }
 
@@ -85,8 +96,8 @@ public class NetworkManager : MonoBehaviour
     public void SendName() 
     {
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.name);
-        messsage.AddString(Player.username);
-        messsage.AddUShort(Player.id);
+        messsage.AddString(PlayerManager.player.username);
+        messsage.AddUShort(PlayerManager.player.id);
         NetworkManager.Singleton.Client.Send(messsage);
         Debug.Log("message envoyer");
     }
@@ -94,9 +105,10 @@ public class NetworkManager : MonoBehaviour
    public void JoinQueue()
     {
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.JoinQueue);
-        messsage.AddUShort(Player.id);
+        messsage.AddUShort(PlayerManager.player.id);
         NetworkManager.Singleton.Client.Send(messsage);
         Debug.Log("message to join the queue send");
+        MenuCanva.SetActive(false);
     }
 
 }
