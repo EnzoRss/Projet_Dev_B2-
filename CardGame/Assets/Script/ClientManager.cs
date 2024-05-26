@@ -22,7 +22,7 @@ public class ClientManager : MonoBehaviour
     public TextMeshProUGUI[] PlayerUI;
     public GameObject GameCanva;
     public GameObject MenuCanva;
-    Vector3 drawPoint = new Vector3(-307, -300);
+    Vector3 drawPoint = new Vector3(-307, -350);
 
     private void Start()
     {
@@ -58,17 +58,18 @@ public class ClientManager : MonoBehaviour
         Debug.Log("atk take start :  " + atkTake);
         for (int i = 0; i < PlayerManager.player.deck.cardOnBoard.Count; i++)
         {
+            Debug.Log(i);
             if (atkTake > 0)
             {
                 int temp = PlayerManager.player.deck.cardOnBoard.ElementAt(i).pv;
                 PlayerManager.player.deck.cardOnBoard.ElementAt(i).pv -= atkTake;
                 atkTake -= temp;
-                Debug.Log("atk take mid :  " + atkTake);
             }
             if (PlayerManager.player.deck.cardOnBoard.ElementAt(i).pv <= 0)
             {
                 Destroy(PlayerManager.player.deck.cardOnBoardUI.ElementAt(i)) ;
                 PlayerManager.player.deck.cardOnBoard.RemoveAt(i);
+                
             }
             else
             {
@@ -138,6 +139,7 @@ public class ClientManager : MonoBehaviour
     {
         int i = PlayerManager.player.deck.AddOnBoard(activeToggle.name);
         Card card = new Card();
+        card = PlayerManager.player.deck.DrawCard();
         GameObject prefabInstance = CardToPrefab(card, i);
         PlayerManager.player.deck.cardInHandUI.Add(prefabInstance);
         int atkToSend = GetAtk();
@@ -166,6 +168,7 @@ public class ClientManager : MonoBehaviour
     {
         //PlayerManager = GameObject.FindObjectOfType<PlayerManager>();
         Debug.Log("la partie commence");
+        int temp = message.GetInt();
         string name = message.GetString(); 
         GameCanva.SetActive(true);
         PlayerUI[0].text = PlayerManager.player.username;
@@ -181,22 +184,26 @@ public class ClientManager : MonoBehaviour
             GameObject prefabInstance = CardToPrefab(card, i);
             PlayerManager.player.deck.cardInHandUI.Add(prefabInstance);
         }
-        if ( message.GetInt() == 0)
+        Debug.Log("getint : " + temp);
+        if (temp == 0)
         {
             FirstPlay.SetActive(true);
         }
-        PlayerManager.player.deck.PrintCardUI();
     }
 
     public void Playing()
     {
-        PlayerManager.player.deck.AddOnBoard(activeToggle.name);
+        int i =PlayerManager.player.deck.AddOnBoard(activeToggle.name);
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.FirstPlay);
         messsage.AddUShort(PlayerManager.player.id);
         messsage.AddString(activeToggle.name);
         NetworkManager.Singleton.Client.Send(messsage);
         Debug.Log("Fin du tour");
         FirstPlay.SetActive(false);
+        Card card = new Card();
+        card = PlayerManager.player.deck.DrawCard();
+        GameObject prefabInstance = CardToPrefab(card, i);
+        PlayerManager.player.deck.cardInHandUI.Add(prefabInstance);
     }
 
     GameObject CardToPrefab(Card card, int i)

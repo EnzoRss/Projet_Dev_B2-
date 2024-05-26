@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b91fe1eaa44099e478a27ea53bf45741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 7777
+  port: 777
   IsConnected: 0
   ConnectButton: {fileID: 395757154}
   MenuCanva: {fileID: 1663345721}

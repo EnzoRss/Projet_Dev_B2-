@@ -56,36 +56,33 @@ public class Deck
         int index = 0;
         for (int i = 0; i< cardInHandUI.Count; i++)
         {
-            Debug.Log("je boucle dans les carte visuel");
             GameObject card = cardInHandUI.ElementAt(i);
             card.GetComponentInChildren<TextMeshProUGUI>();
             TextMeshProUGUI[] TextPrefab = card.GetComponentsInChildren<TextMeshProUGUI>();
             foreach (TextMeshProUGUI textMeshProUGUI in TextPrefab)
             {
-                Debug.Log("je boucle dans le texte des carte : " + textMeshProUGUI.name);
                 if (textMeshProUGUI.name == "Name")
                 {
-                    Debug.Log("je boucle dans le nom des carte : " + textMeshProUGUI.text);
                     if (textMeshProUGUI.text == name)
                     {
-                        Debug.Log("carte ajouter sur le board");
-                        card.transform.position = new Vector3(card.transform.position.x , -200, card.transform.position.z);
+                        Debug.Log("carte ajouter sur le board UI : " + textMeshProUGUI.text);
+                        card.transform.position = new Vector3(card.transform.position.x, -50, card.transform.position.z);
                         cardOnBoardUI.Add(card);
                         cardInHandUI.RemoveAt(i);
 
                     }
                 }
-
             }
             Card carte = cardInHand.ElementAt(i);
             if (carte.card_name == name)
             {
-                Debug.Log("carte ajouter dans la liste board");
+                Debug.Log("carte ajouter sur le board : " + carte.card_name);
                 cardOnBoard.Add(carte);
                 cardInHand.RemoveAt(i);
+                index = i;
             }
-            index = i;
         }
+        Debug.Log("index carte enlevé : "+ index);
         return index;
     }
 

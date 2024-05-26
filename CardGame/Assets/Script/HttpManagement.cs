@@ -13,7 +13,7 @@ using UnityEngine.Windows;
 public class HttpManagement : MonoBehaviour
 {
     string ip;
-    string Path = "/API/";
+    string Path = "/API";
     string url;
     public PlayerManager PlayerManager;
     public GameObject prefabInstance;
@@ -166,7 +166,7 @@ public class HttpManagement : MonoBehaviour
                         textMeshProUGUI.text = card1.description;
                     }
                 }
-                Instantiate(prefabInstance, new Vector3(-107 + 225 * PlayerManager.player.deck.cardOnBoardEnemy.Count, 300), Quaternion.identity);
+                Instantiate(prefabInstance, new Vector3(-107 + 1  * PlayerManager.player.deck.cardOnBoardEnemy.Count, 300), Quaternion.identity);
             }
             else
             {
