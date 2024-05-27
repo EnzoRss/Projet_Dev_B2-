@@ -17,6 +17,7 @@ class DataBaseHandler
     {
 
         $acces = $this->Connexion->dbh;
+        $queryString = '';
         if ($filter == "") {
             $sql = $acces->prepare("select $col from $table");
         } elseif (count($filter) > 1) {
@@ -30,7 +31,7 @@ class DataBaseHandler
         } else {
             $queryString = '';
             foreach ($filter as $key => $value) {
-                $queryString .= "$key=$value";
+                $queryString .= "$key= \"$value\"";
             }
             $sql = $acces->prepare("select $col from $table WHERE $queryString");
         }
@@ -55,32 +56,9 @@ class DataBaseHandler
         }
         $sql = $acces->prepare("select $col from $table1 join $table2 on $key1 = $key2 WHERE $queryString");
         $sql->execute();
-
         $data = $sql->fetchAll();
-       //s var_dump($data);
         // Tableau pour stocker les nouvelles données
-        $realdata = [];
-
-// Parcours de chaque array dans le tableau
-        foreach ($data as $array) {
-            // Initialiser un nouveau tableau pour chaque array
-            $newArray = [];
-
-            // Filtrer uniquement les clés associatives pour cet array
-            foreach ($array as $cle => $valeur) {
-                if (is_string($cle)) {
-                    $newArray[$cle] = $valeur;
-                }
-            }
-
-            // Ajouter le nouvel array au tableau de résultats
-            $realdata[] = $newArray;
-        }
-        $realdata = $this->Utils->ArrayKeyOnly($data);
-        // Afficher le nouveau tableau
-        //var_dump($realdata);
-        //$finaldata = array("Items"=>$realdata);
-        //var_dump($finaldata);
+        $realdata = $this->Utils->ArrayKeyOnly2D($data);
         return $realdata;
     }
 

@@ -3,7 +3,7 @@ require_once($_SERVER["DOCUMENT_ROOT"] . "/API/Service/Service.php");
 require_once($_SERVER["DOCUMENT_ROOT"] . "/API/DataBaseHandler.php");
 
 class SelectData extends Service {
-
+//
     function Trig() {
         $args = $this->GetArgs();
         $table = $args["table"];
