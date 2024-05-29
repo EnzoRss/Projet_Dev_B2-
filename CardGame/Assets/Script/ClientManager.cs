@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Riptide;
 using TMPro;
 using Unity.VisualScripting;
@@ -45,6 +46,10 @@ public class ClientManager : MonoBehaviour
         {
             HandlerActionInGame(e.Message);
         }
+        else if( e.MessageId == (ushort)ClientToServerID.EndGame)
+        {
+            HandlerEndGame(e.Message);
+        }
     }
 
 
@@ -56,41 +61,16 @@ public class ClientManager : MonoBehaviour
         int atkTake = message.GetInt();
         int pvEnemy = message.GetInt();
         Debug.Log("atk take start :  " + atkTake);
-        for (int i = 0; i < PlayerManager.player.deck.cardOnBoard.Count; i++)
-        {
-            Debug.Log(i);
-            if (atkTake > 0)
-            {
-                int temp = PlayerManager.player.deck.cardOnBoard.ElementAt(i).pv;
-                PlayerManager.player.deck.cardOnBoard.ElementAt(i).pv -= atkTake;
-                atkTake -= temp;
-            }
-            if (PlayerManager.player.deck.cardOnBoard.ElementAt(i).pv <= 0)
-            {
-                Destroy(PlayerManager.player.deck.cardOnBoardUI.ElementAt(i)) ;
-                PlayerManager.player.deck.cardOnBoard.RemoveAt(i);
-                
-            }
-            else
-            {
-                TextMeshProUGUI[] TextPrefab = PlayerManager.player.deck.cardOnBoardUI.ElementAt(i).GetComponentsInChildren<TextMeshProUGUI>();
-                foreach (TextMeshProUGUI textMeshProUGUI in TextPrefab)
-                {
-                    if (textMeshProUGUI.name == "PV")
-                    {
-                        textMeshProUGUI.text = "pv : " + PlayerManager.player.deck.cardOnBoard.ElementAt(i).pv;
-                    }
-                }
-            }
-        }
+        atkTake = AtkToCard(PlayerManager.player.deck.cardOnBoardUI, PlayerManager.player.deck.cardOnBoard, atkTake);
         Debug.Log("atk take final :  " + atkTake);
         if (atkTake > 0)
         {
             PlayerManager.player.pv -= atkTake;
             PlayerUI[1].text = "pv : "+PlayerManager.player.pv.ToString();
-            PlayerUI[3].text = "pv : " + pvEnemy;
+            
         }
-        if(PlayerManager.player.pv <= 0)
+        PlayerUI[3].text = "pv : " + pvEnemy;
+        if (PlayerManager.player.pv <= 0)
         {
             Looser();
         }
@@ -98,16 +78,13 @@ public class ClientManager : MonoBehaviour
         
     }
 
-    public void Looser()
+
+    public void HandlerEndGame(Message message)
     {
-        Message messsageToSend = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.InGame);
-        messsageToSend.AddUShort(PlayerManager.player.id);
-        messsageToSend.AddString("le joueur est mort");
-        NetworkManager.Singleton.Client.Send(messsageToSend);
         GameCanva.SetActive(false);
         MenuCanva.SetActive(true);
-        PlayerManager.player.deck.ResetInGame();
-        foreach(GameObject card in PlayerManager.player.deck.cardInHandUI)
+        
+        foreach (GameObject card in PlayerManager.player.deck.cardInHandUI)
         {
             Destroy(card);
         }
@@ -119,6 +96,16 @@ public class ClientManager : MonoBehaviour
         {
             Destroy(card);
         }
+        PlayerManager.player.deck.ResetInGame();
+        httpHandler.StartGetPlayer("/SelectData?table=users&filter={\"username\":\"" + PlayerManager.player.username + "\",\"password\":\"" + PlayerManager.player.password + "\"}"); ;
+    }
+
+
+    public void Looser()
+    {
+        Message messsageToSend = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.EndGame);
+        messsageToSend.AddUShort(PlayerManager.player.id);
+        NetworkManager.Singleton.Client.Send(messsageToSend);
     }
 
 
@@ -138,11 +125,13 @@ public class ClientManager : MonoBehaviour
     public void Finishround() 
     {
         int i = PlayerManager.player.deck.AddOnBoard(activeToggle.name);
+        PlayerManager.player.deck.PrintCardUI();
         Card card = new Card();
         card = PlayerManager.player.deck.DrawCard();
         GameObject prefabInstance = CardToPrefab(card, i);
         PlayerManager.player.deck.cardInHandUI.Add(prefabInstance);
         int atkToSend = GetAtk();
+        AtkToCard(PlayerManager.player.deck.cardOnBoardEnemyUI, PlayerManager.player.deck.cardOnBoardEnemy,atkToSend); 
         Message messsageToSend = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.InGame);
         messsageToSend.AddUShort(PlayerManager.player.id);
         messsageToSend.AddString(activeToggle.name);
@@ -152,13 +141,78 @@ public class ClientManager : MonoBehaviour
         ConfimButton.SetActive(false);
     }
 
+    public int AtkToCard(List<GameObject> cardUI, List<Card> card, int atkTake)
+    {
+
+        List<Card> cards = new List<Card>();
+        List<GameObject> cardsUI = new List<GameObject>();
+        List<int> index = new List<int>();
+        foreach (Card carte in card)
+        {
+            if (atkTake > 0)
+            {
+                int temp = carte.pv;
+                carte.pv -= atkTake;
+                atkTake -= temp;
+            }
+            if (carte.pv <= 0)
+            {
+                cards.Add(carte);
+                foreach (GameObject carteUI in cardUI)
+                {
+                    TextMeshProUGUI[] TextPrefab = carteUI.GetComponentsInChildren<TextMeshProUGUI>();
+                    foreach (TextMeshProUGUI textMeshProUGUI in TextPrefab)
+                    {
+                        if (textMeshProUGUI.name == "Name" && textMeshProUGUI.text == carte.card_name)
+                        {
+                            cardsUI.Add(carteUI);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (GameObject carteUI in cardUI)
+                {
+                    bool correctcard = false;
+                    TextMeshProUGUI[] TextPrefab = carteUI.GetComponentsInChildren<TextMeshProUGUI>();
+                    foreach (TextMeshProUGUI textMeshProUGUI in TextPrefab)
+                    {
+                        if (textMeshProUGUI.name == "Name" && textMeshProUGUI.text == carte.card_name)
+                        {
+                            correctcard = true;
+                        }
+
+                        if (textMeshProUGUI.name == "PV" && correctcard)
+                        {
+                            textMeshProUGUI.text = "pv : " + carte.pv;
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach (Card card1 in cards)
+        {
+            card.Remove(card1);
+        }
+        foreach (GameObject card2 in cardsUI)
+        {
+            cardUI.Remove(card2);
+            Destroy(card2);
+        }
+        return atkTake;
+       } 
+    
+
 
     public int GetAtk()
     {
         int atkToSend = 0;
         foreach (Card card in PlayerManager.player.deck.cardOnBoard)
         {
-            atkToSend = card.atk;
+            Debug.Log("atk de la carte :  " + card.atk);
+            atkToSend += card.atk;
         }
         Debug.Log("atk = " + atkToSend);
         return atkToSend;
@@ -184,7 +238,7 @@ public class ClientManager : MonoBehaviour
             GameObject prefabInstance = CardToPrefab(card, i);
             PlayerManager.player.deck.cardInHandUI.Add(prefabInstance);
         }
-        Debug.Log("getint : " + temp);
+
         if (temp == 0)
         {
             FirstPlay.SetActive(true);
@@ -193,7 +247,7 @@ public class ClientManager : MonoBehaviour
 
     public void Playing()
     {
-        int i =PlayerManager.player.deck.AddOnBoard(activeToggle.name);
+        int i = PlayerManager.player.deck.AddOnBoard(activeToggle.name);
         Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.FirstPlay);
         messsage.AddUShort(PlayerManager.player.id);
         messsage.AddString(activeToggle.name);

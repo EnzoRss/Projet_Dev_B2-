@@ -13,7 +13,7 @@ public enum ClientToServerID : ushort
     GameStart = 3,
     FirstPlay = 4,
     InGame = 5,
-
+    EndGame = 6,
 }
 public class NetworkManager : MonoBehaviour
 {

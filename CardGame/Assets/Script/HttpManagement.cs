@@ -137,16 +137,15 @@ public class HttpManagement : MonoBehaviour
                     Debug.Log("le deck et null");
 
                 }
-                    
-                  Card card1 = new Card();
-                  card1.card_name = cards.card_name;
-                  card1.pv = int.Parse(cards.pv);
-                  card1.atk = int.Parse(cards.atk);
-                  card1.Id = int.Parse(cards.Id_cards);
-                  card1.description = cards.description;
-                  PlayerManager.player.deck.cardOnBoardEnemy.Add(card1);
-                  TextMeshProUGUI[] TextPrefab = prefabInstance.GetComponentsInChildren<TextMeshProUGUI>();
-
+                  
+                 Card card1 = new Card();
+                 card1.card_name = cards.card_name;
+                 card1.pv = int.Parse(cards.pv);
+                 card1.atk = int.Parse(cards.atk);
+                 card1.Id = int.Parse(cards.Id_cards);
+                 card1.description = cards.description;
+                 PlayerManager.player.deck.cardOnBoardEnemy.Add(card1);
+                 TextMeshProUGUI[] TextPrefab = prefabInstance.GetComponentsInChildren<TextMeshProUGUI>();
                 foreach (TextMeshProUGUI textMeshProUGUI in TextPrefab)
                 {
                     if (textMeshProUGUI.name == "PV")
@@ -166,7 +165,8 @@ public class HttpManagement : MonoBehaviour
                         textMeshProUGUI.text = card1.description;
                     }
                 }
-                Instantiate(prefabInstance, new Vector3(-107 + 1  * PlayerManager.player.deck.cardOnBoardEnemy.Count, 300), Quaternion.identity);
+                GameObject temp =   Instantiate(prefabInstance, new Vector3(-50 + ((1  * PlayerManager.player.deck.cardOnBoardEnemy.Count) * 150), 300), Quaternion.identity);
+                PlayerManager.player.deck.cardOnBoardEnemyUI.Add(temp);
             }
             else
             {

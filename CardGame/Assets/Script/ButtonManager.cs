@@ -48,6 +48,8 @@ public  class ButtonManager : MonoBehaviour
         Connect();
     }
 
+
+
     public void Connect()
     {
         nameInput.SetActive(false);

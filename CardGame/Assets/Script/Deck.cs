@@ -20,6 +20,10 @@ public class Deck
     public List<GameObject> cardOnBoardEnemyUI;
     public  Card DrawCard()
     {  
+        if (deck.Count <= 0)
+        {
+            return new Card();
+        }
         int randomNumber = Random.Range(1, deck.Count-1);
         Card cardTodeck = deck.ElementAt(randomNumber);
         cardInHand.Add(deck.ElementAt(randomNumber));
@@ -40,7 +44,7 @@ public class Deck
 
     public void PrintCardUI()
     {
-        foreach (GameObject card in cardInHandUI)
+        foreach (GameObject card in cardOnBoardUI)
         {
             card.GetComponentInChildren<TextMeshProUGUI>();
             TextMeshProUGUI[] TextPrefab = card.GetComponentsInChildren<TextMeshProUGUI>();
@@ -86,11 +90,15 @@ public class Deck
         return index;
     }
 
+
     public void ResetInGame()
     {
-        cardInHand.RemoveRange(cardInHand.Count, cardInHand.Count);
-        cardOnBoard.RemoveRange(cardOnBoard.Count, cardOnBoard.Count);
-        cardOnBoardEnemy.RemoveRange(cardOnBoardEnemy.Count, cardOnBoardEnemy.Count);
+        cardInHand.Clear();
+        cardOnBoard.Clear();
+        cardOnBoardEnemy.Clear();
+        cardInHandUI.Clear();
+        cardOnBoardUI.Clear();
+        cardOnBoardEnemyUI.Clear();
     }
 }
 

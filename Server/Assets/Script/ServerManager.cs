@@ -36,7 +36,7 @@ public class ServerManager : MonoBehaviour
         {
             Debug.Log("message viens de " + ListPlayerInGame.Values.ElementAt(0).Username);
             Debug.Log("Messsage envoyer a : " + ListPlayerInGame.Keys.ElementAt(1));
-            string name =message.GetString();
+            string name = message.GetString();
             Message messsageToSend = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.FirstPlay);
             messsageToSend.AddString(name);
             NetworkManager.server.Send(messsageToSend, ListPlayerInGame.Keys.ElementAt(1));
@@ -58,10 +58,13 @@ public class ServerManager : MonoBehaviour
         string name = message.GetString();
         int atk = message.GetInt();
         int pv = message.GetInt();
+        Debug.Log("pv : "+pv);
+
         Message messageToSend = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.InGame);
         messageToSend.AddString(name);
         messageToSend.AddInt(atk);
         messageToSend.AddInt(pv);
+        
 
         if (ListPlayerInGame.Values.ElementAt(0).Id == id)
         {
@@ -74,6 +77,19 @@ public class ServerManager : MonoBehaviour
             Debug.Log("message ClientToClient viens de " + ListPlayerInGame.Values.ElementAt(1).Username);
             Debug.Log("Messsage ClientToClient envoyer a : " + ListPlayerInGame.Keys.ElementAt(0));
             NetworkManager.server.Send(messageToSend, ListPlayerInGame.Keys.ElementAt(0));
+        }
+    }
+
+    [MessageHandler((ushort)ClientToServerID.EndGame)]
+    private static void EndGame(ushort fromClienId, Message message)
+    {
+        ushort id = message.GetUShort();
+        string str = "partie finie";
+        for (int i = 0; i < 2; i++)
+        {
+            Message messsage = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.EndGame);
+            message.AddString(str);
+            NetworkManager.server.Send(messsage, ListPlayerInGame.Keys.ElementAt(i));
         }
     }
 

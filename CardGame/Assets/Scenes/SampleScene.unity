@@ -6289,7 +6289,7 @@ MonoBehaviour:
   - {fileID: 1362033909}
   - {fileID: 1450761638}
   GameCanva: {fileID: 206709965}
-  MenuCanva: {fileID: 0}
+  MenuCanva: {fileID: 1663345721}
 --- !u!4 &1867253120
 Transform:
   m_ObjectHideFlags: 0
