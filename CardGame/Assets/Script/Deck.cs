@@ -1,38 +1,36 @@
+using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
-public class Deck
+public class Deck 
 {
-    int id; // Identifiant du deck
-    public string name; // Nom du deck
-    public List<Card> deck; // Liste de cartes dans le deck
-    public List<Card> cardInHand; // Liste de cartes en main
-    public List<Card> cardOnBoard; // Liste de cartes sur le terrain
-    public List<GameObject> cardInHandUI; // Liste d'objets représentant les cartes en main (interface utilisateur)
-    public List<GameObject> cardOnBoardUI; // Liste d'objets représentant les cartes sur le terrain (interface utilisateur)
+    int id;
+    public string name;
+    public List<Card> deck;
+    public List<Card> cardInHand;
+    public List<Card> cardOnBoard;
+    public List<GameObject> cardInHandUI;
+    public List<GameObject> cardOnBoardUI;
 
-    public List<Card> cardOnBoardEnemy; // Liste de cartes sur le terrain de l'adversaire
-    public List<GameObject> cardOnBoardEnemyUI; // Liste d'objets représentant les cartes sur le terrain de l'adversaire (interface utilisateur)
-
-    // Méthode pour piocher une carte depuis le deck
-    public Card DrawCard()
-    {
+    public List<Card> cardOnBoardEnemy;
+    public List<GameObject> cardOnBoardEnemyUI;
+    public  Card DrawCard()
+    {  
         if (deck.Count <= 0)
         {
-            // Si le deck est vide, retourne une carte vide
             return new Card();
         }
-        int randomNumber = Random.Range(1, deck.Count - 1); // Génère un nombre aléatoire pour choisir une carte
-        Card cardTodeck = deck.ElementAt(randomNumber); // Sélectionne la carte à piocher
-        cardInHand.Add(deck.ElementAt(randomNumber)); // Ajoute la carte à la main
-        deck.RemoveAt(randomNumber); // Retire la carte du deck
-        return cardTodeck; // Retourne la carte piochée
+        int randomNumber = Random.Range(1, deck.Count-1);
+        Card cardTodeck = deck.ElementAt(randomNumber);
+        cardInHand.Add(deck.ElementAt(randomNumber));
+        deck.RemoveAt(randomNumber);
+        return cardTodeck;
     }
-
-    // Constructeur de la classe Deck
-    public Deck(int id)
+    public Deck(int id) 
     {
         this.id = id;
         deck = new List<Card>();
@@ -44,73 +42,78 @@ public class Deck
         cardOnBoardEnemyUI = new List<GameObject>();
     }
 
-    // Méthode pour afficher les informations des cartes sur l'interface utilisateur
     public void PrintCardUI()
     {
         foreach (GameObject card in cardOnBoardUI)
         {
-            card.GetComponentInChildren<TextMeshProUGUI>(); // Récupère le composant TextMeshProUGUI de l'objet carte
-            TextMeshProUGUI[] TextPrefab = card.GetComponentsInChildren<TextMeshProUGUI>(); // Récupère tous les composants TextMeshProUGUI enfants de l'objet carte
+            card.GetComponentInChildren<TextMeshProUGUI>();
+            TextMeshProUGUI[] TextPrefab = card.GetComponentsInChildren<TextMeshProUGUI>();
             foreach (TextMeshProUGUI textMeshProUGUI in TextPrefab)
             {
-                Debug.Log(textMeshProUGUI.name + " : " + textMeshProUGUI.text); // Affiche le nom et le texte du composant TextMeshProUGUI
+                Debug.Log(textMeshProUGUI.name + " : " + textMeshProUGUI.text);
             }
         }
     }
 
-    // Méthode pour ajouter une carte sur le terrain
     public int AddOnBoard(string name)
     {
         int index = 0;
-        for (int i = 0; i < cardInHandUI.Count; i++)
+        for (int i = 0; i< cardInHandUI.Count; i++)
         {
-            GameObject card = cardInHandUI.ElementAt(i); // Récupère l'objet carte en main à l'indice i
-            card.GetComponentInChildren<TextMeshProUGUI>(); // Récupère le composant TextMeshProUGUI de l'objet carte
-            TextMeshProUGUI[] TextPrefab = card.GetComponentsInChildren<TextMeshProUGUI>(); // Récupère tous les composants TextMeshProUGUI enfants de l'objet carte
+            GameObject card = cardInHandUI.ElementAt(i);
+            card.GetComponentInChildren<TextMeshProUGUI>();
+            TextMeshProUGUI[] TextPrefab = card.GetComponentsInChildren<TextMeshProUGUI>();
             foreach (TextMeshProUGUI textMeshProUGUI in TextPrefab)
             {
-                if (textMeshProUGUI.name == "Name") // Vérifie si le nom correspond au nom de la carte
+                if (textMeshProUGUI.name == "Name")
                 {
-                    if (textMeshProUGUI.text == name) // Si le nom correspond, ajoute la carte sur le terrain
+                    if (textMeshProUGUI.text == name)
                     {
                         Debug.Log("carte ajouter sur le board UI : " + textMeshProUGUI.text);
-                        card.transform.position = new Vector3(card.transform.position.x, -50, card.transform.position.z); // Déplace la carte à une position spécifique sur l'interface utilisateur
-                        cardOnBoardUI.Add(card); // Ajoute la carte sur le terrain (interface utilisateur)
-                        cardInHandUI.RemoveAt(i); // Retire la carte de la main (interface utilisateur)
+                        card.transform.position = new Vector3(card.transform.position.x, -50, card.transform.position.z);
+                        cardOnBoardUI.Add(card);
+                        cardInHandUI.RemoveAt(i);
+
                     }
                 }
             }
-            Card carte = cardInHand.ElementAt(i); // Récupère la carte en main à l'indice i
-            if (carte.card_name == name) // Vérifie si le nom de la carte correspond
+            Card carte = cardInHand.ElementAt(i);
+            if (carte.card_name == name)
             {
                 Debug.Log("carte ajouter sur le board : " + carte.card_name);
-                cardOnBoard.Add(carte); // Ajoute la carte sur le terrain
-                cardInHand.RemoveAt(i); // Retire la carte de la main
+                cardOnBoard.Add(carte);
+                cardInHand.RemoveAt(i);
                 index = i;
             }
         }
-        Debug.Log("index carte enlevé : " + index);
-        return index; // Retourne l'indice de la carte enlevée
+        Debug.Log("index carte enlevé : "+ index);
+        return index;
     }
 
-    // Méthode pour réinitialiser les données en jeu
+
     public void ResetInGame()
     {
-        cardInHand.Clear(); // Efface la liste des cartes en main
-        cardOnBoard.Clear(); // Efface la liste des cartes sur le terrain
-        cardOnBoardEnemy.Clear(); // Efface la liste des cartes sur le terrain de l'adversaire
-        cardInHandUI.Clear(); // Efface la liste des objets représentant les cartes en main (interface utilisateur)
-        cardOnBoardUI.Clear(); // Efface la liste des objets représentant les cartes sur le terrain (interface utilisateur)
-        cardOnBoardEnemyUI.Clear(); // Efface la liste des objets représentant les cartes sur le terrain de l'adversaire (interface utilisateur)
+        cardInHand.Clear();
+        cardOnBoard.Clear();
+        cardOnBoardEnemy.Clear();
+        cardInHandUI.Clear();
+        cardOnBoardUI.Clear();
+        cardOnBoardEnemyUI.Clear();
     }
 }
 
-// Classe représentant une carte
+
+
 public class Card
 {
-    public int Id; // Identifiant de la carte
-    public string card_name; // Nom de la carte
-    public string description; // Description de la carte
-    public int pv; // Points de vie de la carte
-    public int atk; // Points d'attaque de la carte
+    public int Id;
+    public string card_name;
+    public string description;
+    public int pv;
+    public int atk;
+    
 }
+
+
+
+
