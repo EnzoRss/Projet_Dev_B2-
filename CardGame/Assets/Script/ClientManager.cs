@@ -53,6 +53,7 @@ public class ClientManager : MonoBehaviour
     {
         // Récupérer les informations du message
         string name = message.GetString();
+        httpHandler.StartGetCard("/SelectData?table=cards&filter={\"card_name\":\"" + name + "\"}");
         int atkTake = message.GetInt();
         int pvEnemy = message.GetInt();
 

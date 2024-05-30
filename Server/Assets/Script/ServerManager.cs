@@ -58,7 +58,7 @@ public class ServerManager : MonoBehaviour
         string name = message.GetString();
         int atk = message.GetInt();
         int pv = message.GetInt();
-        Debug.Log("pv : "+pv);
+        Debug.Log("name : "+name);
 
         Message messageToSend = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerID.InGame);
         messageToSend.AddString(name);
