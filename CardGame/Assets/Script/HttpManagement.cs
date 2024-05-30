@@ -1,13 +1,8 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
-using static UnityEditor.Progress;
 using TMPro;
-using UnityEngine.Windows;
 
 public class HttpManagement : MonoBehaviour
 {

@@ -1,10 +1,8 @@
 using Riptide;
 using Riptide.Utils;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Windows;
+
 
 // Enumération des identifiants de messages Client vers Serveur
 public enum ClientToServerID : ushort
